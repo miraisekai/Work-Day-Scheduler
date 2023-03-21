@@ -4,31 +4,42 @@ const main = document.querySelector('.container');
 currentDay.innerHTML = time.toLocaleString();
 let store;
 
-const getStorage = async() => {
-    store = localStorage.hours ? JSON.parse(localStorage.hours) : [];
+const getStorage = async () => {
+  store = localStorage.hours ? JSON.parse(localStorage.hours) : [];
 };
 
 getStorage();
 
-let hours = ['9AM','10AM','11AM','12PM','1PM','2PM','3PM','4PM','5PM'];
+const hours = ['9AM', '10AM', '11AM', '12PM', '1PM', '2PM', '3PM', '4PM', '5PM'];
 
-hours.forEach((hour,i) => {
-    let rH = i+9;
-    let cH = time.getHours();
+hours.forEach((hour, i) => {
+  const rH = i + 9;
+  const cH = time.getHours();
 
-    main.innerHTML += `
-        <div class="time-block row">
-            <div class="hour">${hour}</div>
-            <textarea class=${rH<cH ? 'past' : rH>cH ? 'future' : 'present'}></textarea>
-            <div class="saveBtn">
-            <i class="fas fa-save" aria-hidden='true'></i>
-            </div>
-        </div>
-    `;
+  const timeBlock = document.createElement('div');
+  timeBlock.classList.add('time-block', 'row');
+  main.appendChild(timeBlock);
+
+  const hourDiv = document.createElement('div');
+  hourDiv.classList.add('hour');
+  hourDiv.textContent = hour;
+  timeBlock.appendChild(hourDiv);
+
+  const textArea = document.createElement('textarea');
+  textArea.classList.add(rH < cH ? 'past' : rH > cH ? 'future' : 'present');
+  textArea.value = store[i] || '';
+  timeBlock.appendChild(textArea);
+
+  const saveBtnDiv = document.createElement('div');
+  saveBtnDiv.classList.add('saveBtn');
+  timeBlock.appendChild(saveBtnDiv);
+
+  const saveIcon = document.createElement('i');
+  saveIcon.classList.add('fas', 'fa-save');
+  saveBtnDiv.appendChild(saveIcon);
+
+  saveBtnDiv.addEventListener('click', () => {
+    store[i] = textArea.value;
+    localStorage.setItem('hours', JSON.stringify(store));
+  });
 });
-
-const handleSave = () => {
-    
-}
-
-saveBtn.onclick = handleSave;
